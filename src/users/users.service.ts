@@ -9,9 +9,8 @@ export class UserService {
   //   this.user = user;
   // }
 
-  checkUser(response: any) {
-    console.log(response.req.session);
-    return response.req.session;
+  checkUser() {
+    return true;
   }
 
   loginUser(body: userData): boolean {

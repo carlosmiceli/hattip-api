@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Req, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  // Get,
+  Post,
+  Req,
+  Body,
+  // Res,
+  HttpCode,
+  Header,
+} from '@nestjs/common';
 import { UserService } from './users.service';
 import { userData } from './users-types';
 
@@ -6,22 +15,20 @@ import { userData } from './users-types';
 export class UserController {
   constructor(private readonly appService: UserService) {}
 
-  @Get('auth')
-  checkUser(@Req() request: any, @Res({ passthrough: true }) response: any) {
-    // if (
-    //   request.auth.username === 'Carlos' &&
-    //   request.auth.password === 'carlos123'
-    // ) {
-    // console.log(1, request);
-    // const cookie = {
-    //   name: 'Carlos',
-    //   httpOnly: true,
-    //   signed: true,
-    // };
-    // response.setHeader('Set-Cookie', cookie);
-    return this.appService.checkUser(response);
-    // }
-    // return 'Wrong auth';
+  @Post('auth')
+  @Header('Access-Control-Allow-Credentials', 'true')
+  @HttpCode(200)
+  checkUser(@Req() request: any) {
+    if (request.session.user) {
+      console.log('Success!');
+      return this.appService.checkUser();
+    } else if (
+      request.body.userSample.name === 'Carlos' &&
+      request.body.userSample.password === 'carlos123'
+    ) {
+      request.session.user = request.body.userSample;
+      return this.appService.checkUser();
+    } else return 'Wrong!';
   }
 
   // app.get('/authenticate', auth, (req, res) => {
